@@ -1,5 +1,5 @@
 import { Container } from "./styles";
-import Mallikarjuna from "../../assets/Mallikarjuna1.png";
+// import Mallikarjuna from "../../assets/Mallikarjuna1.png";
 import python from "../../assets/python.svg"
 import java from "../../assets/java.svg"
 import wordpress from "../../assets/wordpress.svg";
@@ -113,11 +113,11 @@ export function About() {
           </div>
         </div>
       </div>
-      <div className="about-image">
+      {/* <div className="about-image">
         <ScrollAnimation animateIn="fadeInRight" delay={0.21 * 1000}>
           <img src={Mallikarjuna} alt="Mallikarjuna Gogu" />
         </ScrollAnimation>
-      </div>
+      </div> */}
     </Container>
   )
 }
