@@ -1,20 +1,23 @@
-import { Container, ContainerSucces } from './styles'
-import { useForm, ValidationError } from '@formspree/react'
-import { toast, ToastContainer } from 'react-toastify'
-import ReCAPTCHA from 'react-google-recaptcha'
-import { useEffect, useState } from 'react'
-import validator from 'validator'
+import { Container, ContainerSucces } from './styles';
+import { useForm, ValidationError } from '@formspree/react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import ReCAPTCHA from 'react-google-recaptcha';
+import { useEffect, useState } from 'react';
+import validator from 'validator';
 
 export function Form() {
-  const [state, handleSubmit] = useForm('xovdlelb') // Replace with your actual Formspree ID
-  const [validEmail, setValidEmail] = useState(false)
-  const [isHuman, setIsHuman] = useState(false)
-  const [message, setMessage] = useState('')
+  const [state, handleSubmit] = useForm('xovdlelb');
+  const [validEmail, setValidEmail] = useState(false);
+  const [isHuman, setIsHuman] = useState(false);
+  const [message, setMessage] = useState('');
 
+  // Validate email
   function verifyEmail(email: string) {
-    setValidEmail(validator.isEmail(email))
+    setValidEmail(validator.isEmail(email));
   }
 
+  // Toast on success
   useEffect(() => {
     if (state.succeeded) {
       toast.success('Email successfully sent!', {
@@ -23,22 +26,28 @@ export function Form() {
         closeOnClick: true,
         hideProgressBar: false,
         toastId: 'succeeded',
-      })
+      });
     }
-  }, [state.succeeded])
+  }, [state.succeeded]);
 
+  // Success UI
   if (state.succeeded) {
     return (
       <ContainerSucces>
         <h3>Thanks for getting in touch!</h3>
-        <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+        <button
+          onClick={() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        >
           Back to the top
         </button>
         <ToastContainer />
       </ContainerSucces>
-    )
+    );
   }
 
+  // Form UI
   return (
     <Container>
       <h2>Get in touch using the form</h2>
@@ -63,7 +72,7 @@ export function Form() {
         <ValidationError prefix="Message" field="message" errors={state.errors} />
 
         <ReCAPTCHA
-          sitekey="6Lcv1TMrAAAAAIT9CmFyWP7xlzUvLNdlfoyNy0-c" // Replace with your reCAPTCHA site key
+          sitekey="6Lci3zMrAAAAAO5HFzmPDMknl0nHiexM435hpmRA" // Replace with your real reCAPTCHA site key
           onChange={() => setIsHuman(true)}
         />
 
@@ -76,5 +85,5 @@ export function Form() {
       </form>
       <ToastContainer />
     </Container>
-  )
+  );
 }
