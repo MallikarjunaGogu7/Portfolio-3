@@ -1,31 +1,38 @@
-import { Container, ContainerSucces } from './styles';
-import { useForm, ValidationError } from '@formspree/react';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import ReCAPTCHA from 'react-google-recaptcha';
-import { useEffect, useState } from 'react';
-import validator from 'validator';
+import { Container, ContainerSucces } from "./styles";
+import { useForm, ValidationError } from "@formspree/react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ReCAPTCHA from "react-google-recaptcha";
+import { useEffect, useState } from "react";
+import validator from "validator";
 
 export function Form() {
-  const [state, handleSubmit] = useForm('xovdlelb');
+  const [state, handleSubmit] = useForm("xovdlelb");
   const [validEmail, setValidEmail] = useState(false);
   const [isHuman, setIsHuman] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null); // Explicitly type as string | null
 
   // Validate email
   function verifyEmail(email: string) {
     setValidEmail(validator.isEmail(email));
   }
 
+  // Handle reCAPTCHA change
+  function handleRecaptchaChange(token: string | null) {
+    setRecaptchaToken(token); // Now TypeScript accepts string | null
+    setIsHuman(!!token); // Set isHuman to true if token exists
+  }
+
   // Toast on success
   useEffect(() => {
     if (state.succeeded) {
-      toast.success('Email successfully sent!', {
+      toast.success("Email successfully sent!", {
         position: toast.POSITION.BOTTOM_LEFT,
         pauseOnFocusLoss: false,
         closeOnClick: true,
         hideProgressBar: false,
-        toastId: 'succeeded',
+        toastId: "succeeded",
       });
     }
   }, [state.succeeded]);
@@ -37,7 +44,7 @@ export function Form() {
         <h3>Thanks for getting in touch!</h3>
         <button
           onClick={() => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: "smooth" });
           }}
         >
           Back to the top
@@ -51,7 +58,16 @@ export function Form() {
   return (
     <Container>
       <h2>Get in touch using the form</h2>
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault(); // Prevent default form submission
+          const formData = new FormData(e.target as HTMLFormElement);
+          if (recaptchaToken) {
+            formData.append("g-recaptcha-response", recaptchaToken);
+          }
+          handleSubmit(formData); // Pass form data to Formspree
+        }}
+      >
         <input
           placeholder="Email"
           id="email"
@@ -69,11 +85,15 @@ export function Form() {
           name="message"
           onChange={(e) => setMessage(e.target.value)}
         />
-        <ValidationError prefix="Message" field="message" errors={state.errors} />
+        <ValidationError
+          prefix="Message"
+          field="message"
+          errors={state.errors}
+        />
 
         <ReCAPTCHA
           sitekey="6Lci3zMrAAAAAO5HFzmPDMknl0nHiexM435hpmRA" // Replace with your real reCAPTCHA site key
-          onChange={() => setIsHuman(true)}
+          onChange={handleRecaptchaChange}
         />
 
         <button
