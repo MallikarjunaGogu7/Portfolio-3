@@ -11,17 +11,10 @@ export function Form() {
   const [validEmail, setValidEmail] = useState(false);
   const [isHuman, setIsHuman] = useState(false);
   const [message, setMessage] = useState("");
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null); // Explicitly type as string | null
 
   // Validate email
   function verifyEmail(email: string) {
     setValidEmail(validator.isEmail(email));
-  }
-
-  // Handle reCAPTCHA change
-  function handleRecaptchaChange(token: string | null) {
-    setRecaptchaToken(token); // Now TypeScript accepts string | null
-    setIsHuman(!!token); // Set isHuman to true if token exists
   }
 
   // Toast on success
@@ -58,16 +51,7 @@ export function Form() {
   return (
     <Container>
       <h2>Get in touch using the form</h2>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault(); // Prevent default form submission
-          const formData = new FormData(e.target as HTMLFormElement);
-          if (recaptchaToken) {
-            formData.append("g-recaptcha-response", recaptchaToken);
-          }
-          handleSubmit(formData); // Pass form data to Formspree
-        }}
-      >
+      <form onSubmit={handleSubmit}>
         <input
           placeholder="Email"
           id="email"
@@ -93,7 +77,7 @@ export function Form() {
 
         <ReCAPTCHA
           sitekey="6Lci3zMrAAAAAO5HFzmPDMknl0nHiexM435hpmRA" // Replace with your real reCAPTCHA site key
-          onChange={handleRecaptchaChange}
+          onChange={() => setIsHuman(true)}
         />
 
         <button
